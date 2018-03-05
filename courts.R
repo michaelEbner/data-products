@@ -11,6 +11,7 @@ if (!file.exists("courts.csv")){
 
 courts <- read.csv("courts.csv") %>% select(ID, TYPE, DIVISION,LATITUDE, LONGITUDE)
 
+
 courts %>%
   leaflet() %>%
   addTiles() %>%
