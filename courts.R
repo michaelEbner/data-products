@@ -11,8 +11,13 @@ if (!file.exists("courts.csv")){
 
 courts <- read.csv("courts.csv") %>% select(ID, TYPE, DIVISION,LATITUDE, LONGITUDE)
 
+logo <- makeIcon(
+  iconUrl = "basketball-court-clipart-black-and-white-15.png",
+  iconWidth = 31*215/230, iconHeight = 31,
+  iconAnchorX = 31*215/230/2, iconAnchorY = 16
+)
 
 courts %>%
   leaflet() %>%
   addTiles() %>%
-  addMarkers(clusterOptions = markerClusterOptions())
+  addMarkers(clusterOptions = markerClusterOptions(), icon = logo)
