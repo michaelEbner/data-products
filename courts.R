@@ -1,7 +1,9 @@
 require(rjson)
+require(tidyverse)
+require(leaflet)
 
 
-setwd("/Users/mickey/Documents/GitHub/data-products")
+setwd("/Users/mebner/Documents/for_me/R_coursera/GitHub/data-products")
 
 if (!file.exists("courts.csv")){
   fileURL <- "https://www.data.act.gov.au/api/views/igti-4f4a/rows.csv?accessType=DOWNLOAD"
