@@ -1,0 +1,38 @@
+---
+title: "Courts of Canbarra"
+author: "Michael Ebner"
+date: "07/03/2018"
+output: html_document
+---
+
+Whenever you are in Canbarra and feel the desire to throw some hoops with a locals you can use this map to find a basketball court close to you.
+
+```{r echo=FALSE, cache=TRUE, warning=FALSE, cache.lazy=FALSE, message=FALSE}
+require(rjson)
+require(tidyverse)
+require(leaflet)
+
+
+setwd("/Users/mebner/Documents/for_me/R_coursera/GitHub/data-products")
+
+if (!file.exists("courts.csv")){
+  fileURL <- "https://www.data.act.gov.au/api/views/igti-4f4a/rows.csv?accessType=DOWNLOAD"
+  download.file(fileURL, "courts.csv", method="curl")
+} 
+
+
+courts <- read.csv("courts.csv") %>% select(ID, TYPE, DIVISION,LATITUDE, LONGITUDE)
+
+logo <- makeIcon(
+  iconUrl = "basketball-court-clipart-black-and-white-15.png",
+  iconWidth = 31*215/230, iconHeight = 31,
+  iconAnchorX = 31*215/230/2, iconAnchorY = 16
+)
+
+courts %>%
+  leaflet() %>%
+  addTiles() %>%
+  addMarkers(clusterOptions = markerClusterOptions(), icon = logo)
+```
+
+# HOOP there it is!
