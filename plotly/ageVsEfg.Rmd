@@ -1,0 +1,47 @@
+---
+title: "Impact of Age on the Effective Field Goal Percentage (NBA Season, 2017-2018)"
+author: "Michael Ebner"
+date: "07/03/2018"
+output: ioslides_presentation
+---
+
+
+## Impact of Age on the Effective Field Goal Percentage (NBA Season, 201-2018)
+
+
+```{r echo=FALSE, cache=TRUE, warning=FALSE, cache.lazy=FALSE, message=FALSE}
+library(tidyverse)
+library(plotly)
+library(ggplot2)
+source('/Users/mebner/src/product_analytics/R_Common/atlassian_theme.R')
+
+
+setwd("/Users/mebner/Documents/for_me/R_coursera/GitHub/data-products/plotly")
+df <- read.csv("2017_season.sql")
+
+df$Position <- ifelse(df$Pos == "C","Center",
+                      ifelse(df$Pos %in% c("PG","PG-SG","SG"),"Guard",
+                             ifelse(df$Pos %in% c("SF","SF-SG","PF"),"Forward","undefined")))
+
+tab <- df #%>% filter(FGA < 99)
+xvar = tab$Age
+xtitle = "Age in Years"
+yvar = tab$eFG.
+col = tab$Position
+ytitle = "Effective Field Goal Percentage"
+title = paste0(xtitle," VS ",ytitle)
+
+
+
+p<- ggplot(data=tab, aes(x=xvar,y=yvar)) +
+  geom_smooth()+
+  geom_jitter(size=0.65,height = 0.1,width = 0.25,aes(colour = Position),size = 1)+
+  labs(title = title,
+       y = ytitle,
+       x = xtitle)+
+  scale_color_manual(values=c("#8777D9","#FF5630","#36B37E","#FFAB00","#00B8D9","#0065FF","#403294","#BF2600","#006644","#FF8B00",
+                              "#008DA6","#0049B0","#C0B6F2","#FF8F73","#79F2C0","#FFE380","#79E2F2","#4C9AFF"))+
+  atlassian_theme
+
+ggplotly(p)
+```
