@@ -9,10 +9,11 @@ library(shiny)
 setwd("/Users/mebner/Documents/for_me/R_coursera/GitHub/shiny_app/player_comparions_per_career_year/")
 
 df_players = data.frame()
-for (i in  LETTERS){
+for (i in  letters){
   
   # vector output
-  players <- try(get_players(i))
+  #players <- try(get_players(i))
+  players <-  htmltab(doc = paste0("https://www.basketball-reference.com/players/",i), which = 1, header = 1,rm_nodata_cols = F)
   df_players <- rbind(df_players,players)
 }
 
