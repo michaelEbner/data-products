@@ -37,7 +37,7 @@ players <- df_players #%>% mutate(from = as.numeric(from), to = as.numeric(to)) 
 #player2 <- "Kobe Bryant"
 
 shinyServer(function(input, output) {
-  output$table1 <- reactive({
+  output$plo2 <- reactive({
     
     #selection1 <- players %>% subset(player == input$player1) %>% select(slug)
     selection1 <- players %>% subset(player == player1) %>% select(slug)
@@ -55,7 +55,8 @@ shinyServer(function(input, output) {
     df2 <- df2 %>% mutate(player = as.character(name2), year = as.numeric(substr(Season,1,4))) %>%
       arrange(year) %>% mutate(career_year = row_number(player))
     
-    df <- bind_rows(df1,df2) %>% mutate(G = as.numeric(G),
+    df <- bind_rows(df1,df2) %>% mutate(Age = as.numeric(Age),
+                                        G = as.numeric(G),
                                         GS = as.numeric(GS),
                                         MP = as.numeric(MP),
                                         FG = as.numeric(FG),
@@ -84,8 +85,23 @@ shinyServer(function(input, output) {
                                         TOV = as.numeric(TOV),
                                         PF = as.numeric(PF),
                                         PTS = as.numeric(PTS))
-    return(df)
+    plot <- renderPlot({
+      ggplot(data=df, aes(x=career_year, y = PTS,group = player)) +
+        geom_line(aes(color=player),size = 2)+
+        geom_point(aes(color=player))+
+        theme_light(base_size = 11, base_family = "")+
+        scale_color_manual(values=c("darkorange","dodgerblue"))+
+        #scale_linetype_manual(values=c("solid", "solid"))+
+        scale_x_continuous(breaks = seq(0,100,by=1))+
+        labs(y = "Points per Game",
+             x = "Career Year")
+    })
+    return(plot_pts)
   })
-  
+
 }
 )
+
+
+
+
