@@ -53,14 +53,14 @@ per <- colClean(per)
 per[,6:30] <- lapply(per[,6:30], function (x) as.numeric(x))
 
 
-param <- 'eFG%'
+param <- 'FGA'
 ytitle = 'year of career'
 xtitle = param
 testParam <- paste('',param,'',sep="")
 min <- min(TOV,na.rm = T)
 max <- max(TOV,na.rm = T)
 
-ggplot(data=per, aes(x=no_year, y = TOV,group = name)) +
+ggplot(data=per, aes(x=no_year, y = FGA,group = name)) +
   geom_line(aes(color=name),size = 2)+
   geom_point(aes(color=name))+
   theme_light(base_size = 11, base_family = "")+
