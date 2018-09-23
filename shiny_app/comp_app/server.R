@@ -33,22 +33,25 @@ players <- df_players #%>% mutate(from = as.numeric(from), to = as.numeric(to)) 
 ###server####
 #############
 
-#player1 <- "Michael Jordan"
-#player2 <- "Kobe Bryant"
+id <- c("Dummy")
+input <- as.data.frame(id)
+input$player1 <- "Michael Jordan"
+input$player2 <- "Kobe Bryant"
 
 shinyServer(function(input, output) {
-  output$plo2 <- reactive({
-    
-    #selection1 <- players %>% subset(player == input$player1) %>% select(slug)
-    selection1 <- players %>% subset(player == player1) %>% select(slug)
+  output$plot <- reactive({
+    input$goButton
+    withProgress(message = "Loading Data",value = 0,{ 
+
+    selection1 <- players %>% subset(player == input$player1) %>% select(slug)
     name1 <- players %>% subset(slug == as.character(selection1)) %>% select(player)
     initial1 <- paste0(substr(as.character(selection1), 1, 1),"/")
     df1 <- htmltab(doc = paste0("https://www.basketball-reference.com/players/",initial1,as.character(selection1),".html"), which = 1, header = 1,rm_nodata_cols = F)
     df1 <- df1 %>% mutate(player = as.character(name1), year = as.numeric(substr(Season,1,4))) %>%
       arrange(year) %>% mutate(career_year = row_number(player))
     
-    #selection2 <- players %>% subset(player == input$player2) %>% select(slug)
-    selection2 <- players %>% subset(player == player2) %>% select(slug)
+
+    selection2 <- players %>% subset(player == input$player2) %>% select(slug)
     name2 <- players %>% subset(slug == as.character(selection2)) %>% select(player)
     initial2 <- paste0(substr(as.character(selection2), 1, 1),"/")
     df2 <- htmltab(doc = paste0("https://www.basketball-reference.com/players/",initial2,as.character(selection2),".html"), which = 1, header = 1,rm_nodata_cols = F)
@@ -85,8 +88,10 @@ shinyServer(function(input, output) {
                                         TOV = as.numeric(TOV),
                                         PF = as.numeric(PF),
                                         PTS = as.numeric(PTS))
+    })
+    withProgress(message = "Making Plot",value = 0,{
     plot <- renderPlot({
-      ggplot(data=df, aes(x=career_year, y = PTS,group = player)) +
+      ggplot(data=df, aes(x=Age, y = PTS,group = player)) +
         geom_line(aes(color=player),size = 2)+
         geom_point(aes(color=player))+
         theme_light(base_size = 11, base_family = "")+
@@ -96,7 +101,8 @@ shinyServer(function(input, output) {
         labs(y = "Points per Game",
              x = "Career Year")
     })
-    return(plot_pts)
+    })
+    return(plot)
   })
 
 }

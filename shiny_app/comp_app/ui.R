@@ -12,13 +12,14 @@ library(shiny)
 # Define UI for application that draws a histogram
 
 pageWithSidebar(
-  headerPanel('Player Comparison by Carreer Year and Age'),
+  headerPanel("Player Comparison by Carreer Year and Age"),
   sidebarPanel(
     selectizeInput("player1","Select a Player",unlist(as.list(players %>% select(player)),use.names=F),multiple=F,options=NULL),
-    selectizeInput("player2","Select a Player",unlist(as.list(players %>% select(player)),use.names=F),multiple=F,options=NULL),
-    submitButton("Submit")
+    selectizeInput("player2","Select another Player",unlist(as.list(players %>% select(player)),use.names=F),multiple=F,options=NULL),
+    actionButton("goButton", "Go!")
   ),
   mainPanel(
-    tableOutput('table1')
+    plotOutput("plot", width = 400, height = 300)
   )
 )
+
