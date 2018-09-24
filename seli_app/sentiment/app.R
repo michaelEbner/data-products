@@ -9,40 +9,46 @@
 
 library(shiny)
 
+
 # Define UI for application that draws a histogram
-ui <- 
-  fluidPage(    
-    
-    # Give the page a title
-    titlePanel("Telephones by region"),
-    
-    # Generate a row with a sidebar
-    sidebarLayout(      
+ui <-
+  navbarPage("Survey Overview",
+             tabPanel("Frequencies",
+    fluidPage(    
       
-      # Define the sidebar with one input
-      sidebarPanel(
-        selectInput("view",
-                    "Totals or Percentages",
-                    c("Percentages",
-                      "Totals")),
-        selectInput("monthly_view",
-                          "Time Series:",
-                          c("off",
-                            "on")),
-        selectInput("customer_type_split",
-                          "Split data into customer types:",
-                          c("off",
-                            "on"))
+      # Give the page a title
+      titlePanel("Frequencies"),
+      
+      # Generate a row with a sidebar
+      sidebarLayout(      
         
-      ),
-      
-      # Create a spot for the barplot
-      mainPanel(
-        plotOutput("freq_plot", width = "100%", height = "400px",)
-      )
-      
+        # Define the sidebar with one input
+        sidebarPanel(
+          selectInput("view",
+                      "Totals or Percentages",
+                      c("Percentages",
+                        "Totals")),
+          selectInput("monthly_view",
+                            "Time Series:",
+                            c("off",
+                              "on")),
+          selectInput("customer_type_split",
+                            "Split data into customer types:",
+                            c("off",
+                              "on"))
+          
+        ),
+        
+        # Create a spot for the barplot
+        mainPanel(
+            plotOutput("freq_plot", width = "100%", height = "400px")
+                )
+            )
+        )
+    ),
+    tabPanel("Sentiment"
     )
-  )
+)
 
 
 # Define server logic required to draw a histogram
@@ -59,74 +65,75 @@ server <- function(input, output) {
        ggplot(freq_m_c, aes(x = month, y = Freq,group = topic, color = topic)) + 
          geom_line()+
          geom_point() +
-         scale_y_continuous(breaks = seq(0,9999999, by=500))+
+         #scale_y_continuous(breaks = seq(0,9999999, by=250))+
          facet_grid(customer_type~.,scales = "free")+
-         scale_fill_manual(values=c25)+
+         scale_color_manual(values=c25)+
          labs(title = 'Number of Mentions by Topic',
               y = '# mentions',
               x = ' ')+
-         theme_classic(base_size = 20)
+         theme_classic(base_size = 15)
      } else if (view == 'Percentages' & customer_type_split == 'on' & monthly_view == 'on') {
        ggplot(freq_m_c, aes(x = month, y = prop,group = topic, color = topic)) + 
          geom_line()+
          geom_point() +
          scale_y_continuous(breaks = seq(0,100, by=10), limits = c(-0,100))+
          facet_grid(customer_type~.,scales = "free")+
-         scale_fill_manual(values=c25)+
+         scale_color_manual(values=c25)+
          labs(title = 'Proportino of Mentions by Topic',
               y = '% mentions',
               x = ' ')+
-         theme_classic(base_size = 20)
+         theme_classic(base_size = 15)
      } else if (view == 'Totals' & customer_type_split == 'off' & monthly_view == 'on') {
        ggplot(freq_m, aes(x = month, y = Freq,group = topic, color = topic)) + 
          geom_line()+
          geom_point() +
-         scale_y_continuous(breaks = seq(0,9999999, by=500))+
+         #scale_y_continuous(breaks = seq(0,9999999, by=250))+
          #scale_y_continuous(breaks = seq(0,100, by=10), limits = c(-0,100))+
          #facet_grid(customer_type~.,scales = "free")+
-         scale_fill_manual(values=c25)+
+         scale_color_manual(values=c25)+
          labs(title = 'Proportino of Mentions by Topic',
               y = '% mentions',
               x = ' ')+
-         theme_classic(base_size = 20)
+         theme_classic(base_size = 15)
      } else if (view == 'Percentages' & customer_type_split == 'off' & monthly_view == 'on') {
        ggplot(freq_m, aes(x = month, y = prop,group = topic, color = topic)) + 
          geom_line()+
          geom_point() +
          scale_y_continuous(breaks = seq(0,100, by=10), limits = c(-0,100))+
          #facet_grid(customer_type~.,scales = "free")+
-         scale_fill_manual(values=c25)+
+         scale_color_manual(values=c25)+
          labs(title = 'Proportino of Mentions by Topic',
               y = '% mentions',
               x = ' ')+
-         theme_classic(base_size = 20)
+         theme_classic(base_size = 15)
      } else if (view == 'Totals' & customer_type_split == 'on' & monthly_view == 'off') {
        ggplot(freq_c, aes(x = reorder(topic,-Freq,FUN=sum), weight = Freq, fill = topic)) + 
          geom_bar()+
          geom_text(aes(label = Freq,y = Freq), size = 4,position=position_dodge(width=0.9), vjust=-0.25)+
          #scale_y_continuous(breaks = seq(-2,2, by=.25), limits = c(-1.25,2.25))+
-         scale_y_continuous(breaks = seq(0,9999999, by=500))+
+         #scale_y_continuous(breaks = seq(0,9999999, by=250))+
          facet_grid(customer_type~.,scales = "free")+
          scale_fill_manual(values=c25)+
          labs(title = 'Number of Mentions by Topic',
               y = '# mentions',
               x = ' ')+
-         theme_classic(base_size = 20)
+         theme_classic(base_size = 15)
      } else if (view == 'Totals' & customer_type_split == 'off' & monthly_view == 'off') {
        ggplot(freq, aes(x = reorder(topic,-Freq,FUN=sum), weight = Freq, fill = topic)) + 
          geom_bar()+
          geom_text(aes(label = Freq,y = Freq), size = 4,position=position_dodge(width=0.9), vjust=-0.25)+
-         scale_y_continuous(breaks = seq(0,9999999, by=500))+
+         #scale_y_continuous(breaks = seq(0,9999999, by=250))+
          #scale_y_continuous(breaks = seq(-2,2, by=.25), limits = c(-1.25,2.25))+
          #facet_grid(customer_type~.,scales = "free")+
          scale_fill_manual(values=c25)+
          labs(title = 'Number of Mentions by Topic',
               y = '# mentions',
               x = ' ')+
-         theme_classic(base_size = 20)
+         theme_classic(base_size = 15)
      } else if (view == 'Percentages' & customer_type_split == 'off' & monthly_view == 'off') {
        ggplot(freq, aes(x = reorder(topic,-prop,FUN=sum), weight = prop, fill = topic)) + 
          geom_bar()+
+         coord_flip()+
          geom_text(aes(label = paste0(round(prop,1),'%'),y = prop), size = 4,position=position_dodge(width=0.9), vjust=-0.25)+
          #scale_y_continuous(breaks = seq(-2,2, by=.25), limits = c(-1.25,2.25))+
          #facet_grid(customer_type~.,scales = "free")+
@@ -135,7 +142,7 @@ server <- function(input, output) {
          labs(title = 'Number of Mentions by Topic',
               y = '% mentions',
               x = ' ')+
-         theme_classic(base_size = 20)
+         theme_classic(base_size = 15)
      } else if (view == 'Percentages' & customer_type_split == 'on' & monthly_view == 'off') {
        ggplot(freq_c, aes(x = reorder(topic,prop,FUN=sum), weight = prop, fill = topic)) + 
          geom_bar()+
@@ -148,7 +155,7 @@ server <- function(input, output) {
          labs(title = 'Proportion of Mentions by Topic',
               y = '% mentions',
               x = ' ')+
-         theme_classic(base_size = 20)
+         theme_classic(base_size = 15)
      }
    })
 }
