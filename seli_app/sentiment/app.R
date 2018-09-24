@@ -59,13 +59,13 @@ server <- function(input, output) {
        ggplot(freq_m_c, aes(x = month, y = Freq,group = topic, color = topic)) + 
          geom_line()+
          geom_point() +
-         #scale_y_continuous(breaks = seq(-2,2, by=.25), limits = c(-1.25,2.25))+
+         scale_y_continuous(breaks = seq(0,9999999, by=500))+
          facet_grid(customer_type~.,scales = "free")+
          scale_fill_manual(values=c25)+
          labs(title = 'Number of Mentions by Topic',
               y = '# mentions',
               x = ' ')+
-         theme_dark(base_size = 20)
+         theme_classic(base_size = 20)
      } else if (view == 'Percentages' & customer_type_split == 'on' & monthly_view == 'on') {
        ggplot(freq_m_c, aes(x = month, y = prop,group = topic, color = topic)) + 
          geom_line()+
@@ -76,18 +76,19 @@ server <- function(input, output) {
          labs(title = 'Proportino of Mentions by Topic',
               y = '% mentions',
               x = ' ')+
-         theme_dark(base_size = 20)
+         theme_classic(base_size = 20)
      } else if (view == 'Totals' & customer_type_split == 'off' & monthly_view == 'on') {
        ggplot(freq_m, aes(x = month, y = Freq,group = topic, color = topic)) + 
          geom_line()+
          geom_point() +
+         scale_y_continuous(breaks = seq(0,9999999, by=500))+
          #scale_y_continuous(breaks = seq(0,100, by=10), limits = c(-0,100))+
          #facet_grid(customer_type~.,scales = "free")+
          scale_fill_manual(values=c25)+
          labs(title = 'Proportino of Mentions by Topic',
               y = '% mentions',
               x = ' ')+
-         theme_dark(base_size = 20)
+         theme_classic(base_size = 20)
      } else if (view == 'Percentages' & customer_type_split == 'off' & monthly_view == 'on') {
        ggplot(freq_m, aes(x = month, y = prop,group = topic, color = topic)) + 
          geom_line()+
@@ -98,29 +99,31 @@ server <- function(input, output) {
          labs(title = 'Proportino of Mentions by Topic',
               y = '% mentions',
               x = ' ')+
-         theme_dark(base_size = 20)
+         theme_classic(base_size = 20)
      } else if (view == 'Totals' & customer_type_split == 'on' & monthly_view == 'off') {
        ggplot(freq_c, aes(x = reorder(topic,-Freq,FUN=sum), weight = Freq, fill = topic)) + 
          geom_bar()+
          geom_text(aes(label = Freq,y = Freq), size = 4,position=position_dodge(width=0.9), vjust=-0.25)+
          #scale_y_continuous(breaks = seq(-2,2, by=.25), limits = c(-1.25,2.25))+
+         scale_y_continuous(breaks = seq(0,9999999, by=500))+
          facet_grid(customer_type~.,scales = "free")+
          scale_fill_manual(values=c25)+
          labs(title = 'Number of Mentions by Topic',
               y = '# mentions',
               x = ' ')+
-         theme_dark(base_size = 20)
+         theme_classic(base_size = 20)
      } else if (view == 'Totals' & customer_type_split == 'off' & monthly_view == 'off') {
        ggplot(freq, aes(x = reorder(topic,-Freq,FUN=sum), weight = Freq, fill = topic)) + 
          geom_bar()+
          geom_text(aes(label = Freq,y = Freq), size = 4,position=position_dodge(width=0.9), vjust=-0.25)+
+         scale_y_continuous(breaks = seq(0,9999999, by=500))+
          #scale_y_continuous(breaks = seq(-2,2, by=.25), limits = c(-1.25,2.25))+
          #facet_grid(customer_type~.,scales = "free")+
          scale_fill_manual(values=c25)+
          labs(title = 'Number of Mentions by Topic',
               y = '# mentions',
               x = ' ')+
-         theme_dark(base_size = 20)
+         theme_classic(base_size = 20)
      } else if (view == 'Percentages' & customer_type_split == 'off' & monthly_view == 'off') {
        ggplot(freq, aes(x = reorder(topic,-prop,FUN=sum), weight = prop, fill = topic)) + 
          geom_bar()+
@@ -132,7 +135,7 @@ server <- function(input, output) {
          labs(title = 'Number of Mentions by Topic',
               y = '% mentions',
               x = ' ')+
-         theme_dark(base_size = 20)
+         theme_classic(base_size = 20)
      } else if (view == 'Percentages' & customer_type_split == 'on' & monthly_view == 'off') {
        ggplot(freq_c, aes(x = reorder(topic,prop,FUN=sum), weight = prop, fill = topic)) + 
          geom_bar()+
@@ -145,7 +148,7 @@ server <- function(input, output) {
          labs(title = 'Proportion of Mentions by Topic',
               y = '% mentions',
               x = ' ')+
-         theme_dark(base_size = 20)
+         theme_classic(base_size = 20)
      }
    })
 }
