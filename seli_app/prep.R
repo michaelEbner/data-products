@@ -3,6 +3,7 @@ library(plotly)
 library(ggplot2)
 library(plyr)
 require(pacman)
+library(lubridate)
 pacman::p_load(sentimentr, dplyr, magrittr)
 
 c25 <- c("dodgerblue2","#E31A1C", # red
@@ -195,29 +196,180 @@ if (view == 'totals' & customer_type_split == 'on' & monthly_view == 'on') {
 
 
 
-ggplot(final, aes(x=reorder(topic,ave_sentiment,FUN= median),y=ave_sentiment,color=topic)) +
-  geom_boxplot()+
-  #facet_grid(customer_type~.,scales = "free")+
-  scale_y_continuous(breaks = seq(-2,2, by=.25), limits = c(-1.25,2.25))+
-  #atlassian_theme +
-  coord_flip() +
-  labs(title = 'Sentiment by Topic',
+topic_selection <- c('overall', 'all topics', unique(final$topic))
+customer_type_split <- 'off'
+monthly_view <- 'on'
+
+
+if (topic_selection != 'overall' & topic_selection != 'all topics' & customer_type_split == 'on' & monthly_view == 'on') {
+tab <- final %>% subset(topic == topic_selection)
+ylim <- boxplot.stats(final$ave_sentiment)$stats[c(1,5)]
+ggplot(tab, aes(x=month,y=ave_sentiment,color=topic)) +
+  geom_jitter(position=position_jitter(width=.1, height=0),size = .1, color = "grey")+
+  geom_boxplot(alpha = .01)+
+  facet_grid(customer_type~.,scales = "free")+
+  scale_y_continuous(breaks = seq(-2,2, by=.25), limits = ylim)+
+  scale_color_manual(values=c25)+
+  labs(title = paste0('sentiment on ',topic_selection),
        y = 'sentiment score',
-       x = ' ')+
-  theme_bw(base_size = 16)
-
-
-
-ggplot(out, aes(x=customer_type,y=ave_sentiment,color=customer_type)) +
-  geom_boxplot()+
-  #facet_grid(connie_applink_active~.,scales = "free")+
-  scale_y_continuous(breaks = seq(-2,2, by=.25), limits = c(-1.25,2.25))+
-  #atlassian_theme +
-  labs(title = 'Sentiment by Topic',
-       y = 'sentiment score',
-       x = ' ')+
-  theme_bw(base_size = 16)
-
+       x = ' ',
+       caption = 'outliers removed')+
+  theme_classic(base_size = 15)
+} else if(topic_selection != 'overall' & topic_selection != 'all topics' & customer_type_split == 'on' & monthly_view == 'off') {
+  tab <- final %>% subset(topic == topic_selection)
+  ylim <- boxplot.stats(final$ave_sentiment)$stats[c(1,5)]
+  ggplot(tab, aes(x='total',y=ave_sentiment,color=topic)) +
+    geom_jitter(position=position_jitter(width=.1, height=0),size = .1, color = "grey")+
+    geom_boxplot(alpha = .01)+
+    facet_grid(.~customer_type,scales = "free")+
+    scale_y_continuous(breaks = seq(-2,2, by=.25), limits = ylim)+
+    scale_color_manual(values=c25)+
+    labs(title = paste0('sentiment on ',topic_selection),
+         y = 'sentiment score',
+         x = ' ',
+         caption = 'outliers removed')+
+    theme_classic(base_size = 15)
+} else if(topic_selection != 'overall' & topic_selection != 'all topics' & customer_type_split == 'off' & monthly_view == 'on') {
+  tab <- final %>% subset(topic == topic_selection)
+  ylim <- boxplot.stats(final$ave_sentiment)$stats[c(1,5)]
+  ggplot(tab, aes(x=month,y=ave_sentiment,color=topic)) +
+    geom_jitter(position=position_jitter(width=.1, height=0),size = .1, color = "grey")+
+    geom_boxplot(alpha = .01)+
+    #facet_grid(customer_type~.,scales = "free")+
+    scale_y_continuous(breaks = seq(-2,2, by=.25), limits = ylim)+
+    scale_color_manual(values=c25)+
+    labs(title = paste0('sentiment on ',topic_selection),
+         y = 'sentiment score',
+         x = ' ',
+         caption = 'outliers removed')+
+    theme_classic(base_size = 15)
+} else if(topic_selection != 'overall' & topic_selection != 'all topics' & customer_type_split == 'off' & monthly_view == 'off') {
+  tab <- final %>% subset(topic == topic_selection)
+  ylim <- boxplot.stats(final$ave_sentiment)$stats[c(1,5)]
+  ggplot(tab, aes(x='total',y=ave_sentiment,color=topic)) +
+    geom_jitter(position=position_jitter(width=.1, height=0),size = .1, color = customer_type)+
+    geom_boxplot(alpha = .01)+
+    #facet_grid(customer_type~.,scales = "free")+
+    scale_y_continuous(breaks = seq(-2,2, by=.25), limits = ylim)+
+    scale_color_manual(values=c25)+
+    labs(title = paste0('sentiment on ',topic_selection),
+         y = 'sentiment score',
+         x = ' ',
+         caption = 'outliers removed')+
+    theme_classic(base_size = 15)
+} else if (topic_selection == 'overall' & customer_type_split == 'on' & monthly_view == 'on') {
+  tab <- out
+  ylim <- boxplot.stats(final$ave_sentiment)$stats[c(1,5)]
+  ggplot(tab, aes(x=month,y=ave_sentiment,color=c25[1])) +
+    geom_jitter(position=position_jitter(width=.1, height=0),size = .1, color = "grey")+
+    geom_boxplot(alpha = .01,show.legend=F)+
+    facet_grid(customer_type~.,scales = "free")+
+    scale_y_continuous(breaks = seq(-2,2, by=.25), limits = ylim)+
+    scale_color_manual(values=c25)+
+    labs(title = 'overall sentiment',
+         y = 'sentiment score',
+         x = ' ',
+         caption = 'outliers removed')+
+    theme_classic(base_size = 15)
+} else if(topic_selection == 'overall' & customer_type_split == 'on' & monthly_view == 'off') {
+  tab <- out
+  ylim <- boxplot.stats(final$ave_sentiment)$stats[c(1,5)]
+  ggplot(tab, aes(x='total',y=ave_sentiment,color=c25[1])) +
+    geom_jitter(position=position_jitter(width=.1, height=0),size = .1, color = "grey")+
+    geom_boxplot(alpha = .01,show.legend=F)+
+    facet_grid(.~customer_type,scales = "free")+
+    scale_y_continuous(breaks = seq(-2,2, by=.25), limits = ylim)+
+    scale_color_manual(values=c25)+
+    labs(title = 'overall sentiment',
+         y = 'sentiment score',
+         x = ' ',
+         caption = 'outliers removed')+
+    theme_classic(base_size = 15)
+} else if(topic_selection == 'overall' & customer_type_split == 'off' & monthly_view == 'on') {
+  tab <- out
+  ylim <- boxplot.stats(final$ave_sentiment)$stats[c(1,5)]
+  ggplot(tab, aes(x=month,y=ave_sentiment,color=c25[1])) +
+    geom_jitter(position=position_jitter(width=.1, height=0),size = .1, color = "grey")+
+    geom_boxplot(alpha = .01,show.legend=F)+
+    #facet_grid(customer_type~.,scales = "free")+
+    scale_y_continuous(breaks = seq(-2,2, by=.25), limits = ylim)+
+    scale_color_manual(values=c25)+
+    labs(title = 'overall sentiment',
+         y = 'sentiment score',
+         x = ' ',
+         caption = 'outliers removed')+
+    theme_classic(base_size = 15)
+} else if(topic_selection == 'overall' & customer_type_split == 'off' & monthly_view == 'off') {
+  tab <- final
+  ylim <- boxplot.stats(final$ave_sentiment)$stats[c(1,5)]
+  ggplot(tab, aes(x='total',y=ave_sentiment,color=c25[1])) +
+    geom_jitter(position=position_jitter(width=.1, height=0),size = .1, color = "grey")+
+    geom_boxplot(alpha = .01,show.legend=F)+
+    #facet_grid(customer_type~.,scales = "free")+
+    scale_y_continuous(breaks = seq(-2,2, by=.25), limits = ylim)+
+    scale_color_manual(values=c25)+
+    labs(title = 'overall sentiment',
+         y = 'sentiment score',
+         x = ' ',
+         caption = 'outliers removed')+
+    theme_classic(base_size = 15)
+} if (topic_selection == 'all topics' & customer_type_split == 'on' & monthly_view == 'on') {
+  tab <- final
+  ylim <- boxplot.stats(final$ave_sentiment)$stats[c(1,5)]
+  ggplot(tab, aes(x=month,y=ave_sentiment,color=topic)) +
+    geom_jitter(position=position_jitter(width=.1, height=0),size = .1, color = "grey")+
+    geom_boxplot(alpha = .01)+
+    facet_grid(customer_type~.,scales = "free")+
+    scale_y_continuous(breaks = seq(-2,2, by=.25), limits = ylim)+
+    scale_color_manual(values=c25)+
+    labs(title = paste0('sentiment on ',topic_selection),
+         y = 'sentiment score',
+         x = ' ',
+         caption = 'outliers removed')+
+    theme_classic(base_size = 15)
+} else if(topic_selection == 'all topics' & customer_type_split == 'on' & monthly_view == 'off') {
+  tab <- final
+  ylim <- boxplot.stats(final$ave_sentiment)$stats[c(1,5)]
+  ggplot(tab, aes(x='total',y=ave_sentiment,color=topic)) +
+    geom_jitter(position=position_jitter(width=.1, height=0),size = .1, color = "grey")+
+    geom_boxplot(alpha = .01)+
+    facet_grid(.~customer_type,scales = "free")+
+    scale_y_continuous(breaks = seq(-2,2, by=.25), limits = ylim)+
+    scale_color_manual(values=c25)+
+    labs(title = paste0('sentiment on ',topic_selection),
+         y = 'sentiment score',
+         x = ' ',
+         caption = 'outliers removed')+
+    theme_classic(base_size = 15)
+} else if(topic_selection == 'all topics'& customer_type_split == 'off' & monthly_view == 'on') {
+  tab <- final
+  ylim <- boxplot.stats(final$ave_sentiment)$stats[c(1,5)]
+  ggplot(tab, aes(x=month,y=ave_sentiment,color=topic)) +
+    geom_jitter(position=position_jitter(width=.1, height=0),size = .1, color = "grey")+
+    geom_boxplot(alpha = .01)+
+    #facet_grid(customer_type~.,scales = "free")+
+    scale_y_continuous(breaks = seq(-2,2, by=.25), limits = ylim)+
+    scale_color_manual(values=c25)+
+    labs(title = paste0('sentiment on ',topic_selection),
+         y = 'sentiment score',
+         x = ' ',
+         caption = 'outliers removed')+
+    theme_classic(base_size = 15)
+} else if(topic_selection == 'all topics' & customer_type_split == 'off' & monthly_view == 'off') {
+  tab <- final
+  ylim <- boxplot.stats(final$ave_sentiment)$stats[c(1,5)]
+  ggplot(tab, aes(x='total',y=ave_sentiment,color=topic)) +
+    geom_jitter(position=position_jitter(width=.1, height=0),size = .1, color = customer_type)+
+    geom_boxplot(alpha = .01)+
+    #facet_grid(customer_type~.,scales = "free")+
+    scale_y_continuous(breaks = seq(-2,2, by=.25), limits = ylim)+
+    scale_color_manual(values=c25)+
+    labs(title = paste0('sentiment on ',topic_selection),
+         y = 'sentiment score',
+         x = ' ',
+         caption = 'outliers removed')+
+    theme_classic(base_size = 15)
+}
 
 
 
