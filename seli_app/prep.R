@@ -33,6 +33,14 @@ raw$customer_type <- ifelse(str_replace_all(raw$How.often.do.you.purchase.from.T
                                   ifelse(raw$How.often.do.you.purchase.from.THE.ICONIC. == 'This is my first purchase','new',
                                          'existing'))
 
+q <- colnames(raw)
+q <- as.data.frame(q)
+q <-q %>% dplyr::rename(questions = q) %>% mutate(text = str_replace_all(questions, "\\.+", " "))
+q$id <- seq.int(nrow(q))
+
+
+
+
 #reshape data
 subdf <- raw %>%
   subset(!is.na(For.a.chance.to.win..200.voucher..please.tell.us.in.100.words.or.less..what.type.of.advertising.you.d.like.to.see.from.us.and.how.we.can.improve.Â.)) %>%
@@ -370,11 +378,6 @@ ggplot(tab, aes(x=month,y=ave_sentiment,color=topic)) +
          caption = 'outliers removed')+
     theme_classic(base_size = 15)
 }
-
-
-
-
-
 
 
 
