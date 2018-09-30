@@ -31,15 +31,15 @@ c25 <- c("dodgerblue2","#E31A1C", # red
 
 
 #Set Working Directore
-setwd("/Users/mickey/Documents/GitHub/data-products/seli_app")
+setwd("/Users/mickey/Documents/GitHub/data-products/seli_app/sentiment")
 #get data
-df <- read.csv("20180830003631-SurveyExport - 20180830003631-SurveyExport.csv")
+df <- read.csv("20180830003631-SurveyExport.csv")
 
 raw <- df
 
 #segments
-raw$customer_type <- ifelse(str_replace_all(raw$How.often.do.you.purchase.from.THE.ICONIC., "[[:punct:]]", " ") == 'I haven t made a purchase yet','new',
-                            ifelse(raw$How.often.do.you.purchase.from.THE.ICONIC. == 'This is my first purchase','new',
+raw$customer_type <- ifelse(str_replace_all(raw$How.often.do.you.purchase.from.THE.ANONYMIZED., "[[:punct:]]", " ") == 'I haven t made a purchase yet','new',
+                            ifelse(raw$How.often.do.you.purchase.from.THE.ANONYMIZED. == 'This is my first purchase','new',
                                    'existing'))
 
 #reshape data
@@ -186,9 +186,26 @@ ui <-
                                  )
                                )
                              )
-                    )
+                    ),
+             tabPanel("Documentation",
+                      fluidPage(
+                        HTML("
+                          <h1>About this version of the dashboard</h1>
+                          <p>This dashboards presents the results of a online survye conducted by an US-american fashion online store.</p>
+                          <p> The survey is conducted continously and new data will be added over time. </p>
+                          <p>This version of the dashboard is specially build for the peer-graded Coursera assignment and does not allow users to upload new data. The final version of the dashboard, however, will allow users to upload new data sets. </p>
+                          <p>The data has been anynomized in order to protect the client and the customers. </p>
+                          <h1>How to use this dashboard</h1>
+                          <p>Users may select 2 different views on the data: 'Frequencies' and 'Sentiment</p>
+                          <p>The survey is conducted continously and new data will be added over time. </p>
+                          <p>The 'Frequencies' answers the question how often have certain topics been mentioned.</p>
+                          <p>The 'Sentiment' gives you an idea of the sentiment per topic or overall. The higher the sentiment score the better the sentiment.</p>
+                          <p>Simply switch between the views using the tabs on top.</p>
+                          <p> Within the views you may pick the topic of choice and split it into customer types and/or add a time dimension (month) by using the drop down menues.</p>
+                            ")
+                      )
+              )
 )
-
 
 
 # Define server logic required to draw a histogram
