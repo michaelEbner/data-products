@@ -1,0 +1,10 @@
+name: sentiment
+title:
+username:
+account: michaelebner
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 470022
+bundleId: 1606080
+url: https://michaelebner.shinyapps.io/sentiment/
+when: 1537936470.96957
